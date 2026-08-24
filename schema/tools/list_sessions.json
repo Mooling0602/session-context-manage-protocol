@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/list_sessions.json",
+  "title": "SCMP tool: list_sessions (input)",
+  "description": "列出信任域内符合查询条件的会话（docs/10-tools.md §5）",
+  "type": "object",
+  "properties": {
+    "keyword": { "type": "string", "description": "按标题子串过滤（不区分大小写）" },
+    "status": { "enum": ["idle", "busy", "terminated"] },
+    "workspace": { "type": "string", "description": "按工作区路径过滤" }
+  },
+  "additionalProperties": false
+}

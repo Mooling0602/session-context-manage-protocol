@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/dispatch.json",
+  "title": "SCMP tool: dispatch (input)",
+  "description": "异步派发：立即返回，结果自动回送。工具描述必须含防轮询文案（docs/10-tools.md §1）",
+  "type": "object",
+  "required": ["target", "message"],
+  "properties": {
+    "target": { "type": "string", "minLength": 1, "description": "目标会话的 sessionId" },
+    "message": { "type": "string", "minLength": 1, "description": "派发的消息正文（Markdown）" },
+    "timeout": { "type": "integer", "minimum": 1, "default": 1800, "description": "结果等待上限（秒）" }
+  },
+  "additionalProperties": false
+}

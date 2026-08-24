@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/wait.json",
+  "title": "SCMP tool: wait (input)",
+  "description": "同步阻塞等待：工具调用在收到回复（或超时）前不返回，期间宿主不得调用 LLM API（docs/10-tools.md §2）",
+  "type": "object",
+  "required": ["target", "message"],
+  "properties": {
+    "target": { "type": "string", "minLength": 1, "description": "目标会话的 sessionId" },
+    "message": { "type": "string", "minLength": 1, "description": "发送的消息正文（Markdown）" },
+    "timeout": { "type": "integer", "minimum": 1, "default": 1800, "description": "阻塞等待上限（秒）" }
+  },
+  "additionalProperties": false
+}

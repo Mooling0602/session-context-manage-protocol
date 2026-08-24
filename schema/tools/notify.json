@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/notify.json",
+  "title": "SCMP tool: notify (input)",
+  "description": "单向通知：不期望回复，立即返回投递结果（docs/10-tools.md §3）",
+  "type": "object",
+  "required": ["target", "message"],
+  "properties": {
+    "target": { "type": "string", "minLength": 1, "description": "目标会话的 sessionId" },
+    "message": { "type": "string", "minLength": 1, "description": "通知正文；作为完成声明兜底时应包含对方 dispatchId" }
+  },
+  "additionalProperties": false
+}

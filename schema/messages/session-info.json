@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/messages/session-info.json",
+  "title": "SCMP SessionInfo",
+  "description": "SCMP v0.1 会话记录（docs/20-data-model.md §2）",
+  "type": "object",
+  "required": ["ref", "title", "status", "protocolVersion", "updatedAt"],
+  "properties": {
+    "ref": { "$ref": "#/definitions/sessionRef" },
+    "title": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["idle", "busy", "terminated"] },
+    "capabilities": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "protocolVersion": { "const": "0.1" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "stale": { "type": "boolean", "default": false, "description": "由观察方计算的心跳过期标记，不持久化" }
+  },
+  "definitions": {
+    "sessionRef": {
+      "type": "object",
+      "title": "SCMP SessionRef",
+      "description": "会话引用，用于消息路由（docs/20-data-model.md §1）",
+      "required": ["runtime", "workspace", "sessionId"],
+      "properties": {
+        "runtime": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "examples": ["opencode", "dsh"] },
+        "workspace": { "type": "string", "minLength": 1 },
+        "sessionId": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

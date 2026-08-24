@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/messages/dispatch-record.json",
+  "title": "SCMP DispatchRecord",
+  "description": "SCMP v0.1 派发记录与状态机（docs/20-data-model.md §6）",
+  "type": "object",
+  "required": ["dispatchId", "envelope", "state", "createdAt", "updatedAt", "expiresAt"],
+  "properties": {
+    "dispatchId": { "type": "string", "format": "uuid", "description": "调用方生成，幂等键" },
+    "envelope": { "$ref": "envelope.json" },
+    "state": { "enum": ["submitted", "working", "completed", "failed", "canceled"] },
+    "result": { "$ref": "envelope.json#/$defs/payload", "description": "completed 时的结果" },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "integer" },
+        "message": { "type": "string" },
+        "data": {}
+      },
+      "additionalProperties": true
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,24 @@
+# SCMP 版本化策略
+
+## 1. 规范版本
+
+- 本规范遵循语义化版本（semver）：`MAJOR.MINOR.PATCH`。
+- 草案期（`0.x`）：MINOR 递增 = 新增分册或条款；PATCH = 勘误。
+- `protocolVersion` 字段当前值 `"0.1"`；草案期内不承诺兼容性冻结。
+
+## 2. 版本协商（本地绑定）
+
+- v0.1 简化为**字符串相等**：协作双方的 `SessionInfo.protocolVersion` 必须均为 `"0.1"`。
+- 不匹配时：派发方必须拒绝协作并以 `40806 permission-denied` 返回，`data` 中给出对方版本号。
+- 未来 `0.2+` 引入区间协商（`minVersion`/`maxVersion`），届时另立条款，不追溯要求 0.1 实现。
+
+## 3. Schema 版本
+
+- `schema/` 下每个 JSON Schema 含独立 `$id`（指向本仓库 raw 地址）与 `const`/`enum` 约束的 `protocolVersion`。
+- Schema 变更与规范分册同步发版；草案期内允许非破坏性追加字段（接收方必须忽略未知字段——见 20 §5 的向前兼容原则）。
+
+## 4. 变更日志
+
+| 版本 | 日期 | 内容 |
+|---|---|---|
+| 0.1-draft.1 | 2026-08-24 | 初始草案：L1 六工具规范、L2 数据模型（信封/派发状态机/错误码/环检测/TTL）、L3a 本地绑定、一致性分级、JSON Schema 首版 |

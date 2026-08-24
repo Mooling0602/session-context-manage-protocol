@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/get_self_metadata.json",
+  "title": "SCMP tool: get_self_metadata (input)",
+  "description": "返回当前会话身份元数据，只读、无副作用（docs/10-tools.md §6）",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

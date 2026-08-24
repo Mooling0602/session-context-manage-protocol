@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/tools/common-result.json",
+  "title": "SCMP unified tool result shape",
+  "description": "所有 SCMP 工具的统一返回形状（docs/10-tools.md §0.2）。协议错误在返回体内表达，不视为工具崩溃",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["ok"],
+      "properties": {
+        "ok": { "const": true }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": ["ok", "error"],
+      "properties": {
+        "ok": { "const": false },
+        "error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "integer" },
+            "message": { "type": "string" },
+            "data": {}
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}
