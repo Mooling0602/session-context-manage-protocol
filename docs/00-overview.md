@@ -24,7 +24,7 @@ SCMP（Session Context Manage Protocol）是一个面向 LLM Coding Agent 的**�
 | 各家实现私有，不可移植 | 工具接口、数据模型、传输绑定全部标准化 |
 | 无法跨工具/跨机器协作 | v0.2 远程绑定（规划） |
 
-SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/opencode-agent-bridge)（npm 插件，已在真实模型上验证六工具模型的可行性与模型行为特征）。本规范将其经验协议化，并吸收 A2A 语义层（调研存档见 [research-acp-a2a.md](research-acp-a2a.md)）。
+SCMP 规范诞生之前已有落地方案 [opencode-agent-bridge](https://github.com/Mooling0602/opencode-agent-bridge)（npm 插件，已在真实模型上验证六工具模型的可行性与模型行为特征）。本规范将其经验协议化，并吸收 A2A 语义层（调研存档见 [research-acp-a2a.md](research-acp-a2a.md)）。
 
 ## 3. 非目标（当前草案期）
 
@@ -51,19 +51,19 @@ SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/o
 ## 5. 架构分层
 
 ```
-┌─────────────────────────────────────────────┐
-│  L1 工具接口层（模型所见）                    │
+┌──────────────────────────────────────────────┐
+│  L1 工具接口层（模型所见）                   │
 │  dispatch · wait · notify · check            │
 │  list_sessions · get_self_metadata           │
-├─────────────────────────────────────────────┤
-│  L2 数据模型层（语义核心）                    │
+├──────────────────────────────────────────────┤
+│  L2 数据模型层（语义核心）                   │
 │  Session · Envelope · DispatchRecord 状态机  │
-│  correlationId 幂等 · callChain 环检测 · TTL  │
-├─────────────────────────────────────────────┤
-│  L3 传输绑定层                                │
+│  correlationId 幂等 · callChain 环检测 · TTL │
+├──────────────────────────────────────────────┤
+│  L3 传输绑定层                               │
 │  v0.2: local（文件注册表 + inbox）           │
-│        remote（WS 网关路由，纯路由域模型）    │
-└─────────────────────────────────────────────┘
+│        remote（WS 网关路由，纯路由域模型）   │
+└──────────────────────────────────────────────┘
 ```
 
 - **L1** 规定模型调用的六个工具的名称、参数、返回与语义（[10-tools.md](10-tools.md)）
