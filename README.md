@@ -4,7 +4,7 @@
 
 > 面向 LLM Coding Agent 的**跨会话协作协议**：让多个保有独立上下文的会话彼此发现、派发任务、等待回复、发送通知并检查上下文。
 >
-> 状态：**v0.1-draft.1（中文草案）** · 远程绑定（v0.2）与英文 normative 版本规划中
+> 状态：**v0.2-draft.1（中文草案）** · 远程绑定（v0.2）已出草案 · 英文 normative 版本规划中
 
 ## 一句话定位
 
@@ -31,6 +31,7 @@
 | [docs/10-tools.md](docs/10-tools.md) | L1 · 六个工具的规范定义（含防轮询必须文案） |
 | [docs/20-data-model.md](docs/20-data-model.md) | L2 · 数据模型：信封、派发状态机、错误码、环检测、TTL |
 | [docs/30-local-binding.md](docs/30-local-binding.md) | L3a · 本地绑定：文件注册表、原子写、inbox 投递 |
+| [docs/40-remote-binding.md](docs/40-remote-binding.md) | L3b · 远程绑定：网关路由域、WS 帧协议、鉴权、多归属、远程 check |
 | [docs/35-host-adaptation.md](docs/35-host-adaptation.md) | 宿主适配 · 跨工具内部结构 → 协议概念的规范化映射与降级 |
 | [docs/90-conformance.md](docs/90-conformance.md) | 一致性分级（C1/C2/C3）与 MUST 检查表 |
 | [versions.md](versions.md) | 版本化策略与变更日志 |
@@ -44,11 +45,13 @@
 3. **协议级环检测**：信封携带 `callChain`，循环等待在投递前即被拒绝（40803），杜绝 A-wait-B / B-wait-A 死锁。
 4. **显式关联取代猜测**：correlationId / dispatchId 取代原实现「水位 + 文本探针 + 50 条滑窗」的回复识别。
 5. **宿主适配规范化**：协议面只见 SCMP 概念——SCMP 会话 ID（`runtime@原生ID`）、统一角色枚举、统一注入格式；各家内部结构差异按 [35 分册](docs/35-host-adaptation.md)降级映射，原生 ID 不泄漏。
+6. **远程绑定 = 路由域模型**：网关纯路由（零语义状态、零消息暂存，在线快照型 presence），Host 多归属实现跨域可达；完整地址 `gatewayId:clientId@scmpId`；离线投递 NACK + presence 订阅；静态 token 鉴权。见 [40 分册](docs/40-remote-binding.md)。
 
 ## 路线图
 
-- **v0.1（本草案）**：L1 工具 + L2 数据模型 + 本地绑定 + JSON Schema
-- **v0.2**：远程连接协议与鉴权（`docs/40-remote-binding.md`，占位）
+- **v0.1**：L1 工具 + L2 数据模型 + 本地绑定 + JSON Schema ✅
+- **v0.2（草案中）**：远程连接协议（网关路由域、WS 帧协议、鉴权、多归属）
+- **v0.3**：网关联邦/集群（候选）
 - **v1.0**：语义冻结 + 英文 normative 版本 + TCK 兼容性测试套件
 
 ## 来源与致谢

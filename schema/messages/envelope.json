@@ -2,22 +2,30 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/messages/envelope.json",
   "title": "SCMP Envelope",
-  "description": "SCMP v0.1 消息信封（docs/20-data-model.md §4-5）",
+  "description": "SCMP v0.2 消息信封（docs/20-data-model.md §4-5；kind=check 与 request 字段见 docs/40-remote-binding.md §9）",
   "type": "object",
   "required": ["protocolVersion", "messageId", "kind", "sender", "target", "payload", "createdAt"],
   "properties": {
-    "protocolVersion": { "const": "0.1" },
+    "protocolVersion": { "const": "0.2" },
     "messageId": { "type": "string", "format": "uuid" },
-    "kind": { "enum": ["dispatch", "wait", "notify", "reply", "system"] },
+    "kind": { "enum": ["dispatch", "wait", "notify", "reply", "system", "check"] },
     "sender": { "$ref": "session-info.json#/definitions/sessionRef" },
     "target": { "$ref": "session-info.json#/definitions/sessionRef" },
-    "payload": { "$ref": "#/definitions/payload" },
+    "payload": { "$ref": "#/$defs/payload" },
     "correlationId": { "type": "string", "description": "reply 必填：指向所回复消息的 messageId" },
     "dispatchId": { "type": "string", "format": "uuid", "description": "kind=dispatch|wait 必填；reply 回指" },
     "callChain": { "type": "array", "items": { "type": "string" }, "maxItems": 16, "description": "sessionId 有序列表，dispatch/wait 必填（环检测）" },
     "ttl": { "type": "integer", "minimum": 1, "default": 604800, "description": "派发记录存活秒数，默认 7 天" },
     "createdAt": { "type": "string", "format": "date-time" },
-    "auth": { "type": "object", "description": "保留字段（v0.2 远程绑定）" }
+    "request": {
+      "type": "object",
+      "description": "kind=check 时的请求参数（docs/40-remote-binding.md §9）",
+      "properties": {
+        "limit": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+      },
+      "additionalProperties": false
+    },
+    "auth": { "type": "object", "description": "保留字段（未来扩展）" }
   },
   "$defs": {
     "payload": {
@@ -34,7 +42,7 @@
       "title": "SCMP Part",
       "required": ["type"],
       "properties": {
-        "type": { "type": "string", "description": "v0.1 仅定义 text；未知类型必须忽略（向前兼容）" },
+        "type": { "type": "string", "description": "v0.2 仅定义 text；未知类型必须忽略（向前兼容）" },
         "text": { "type": "string" },
         "mime": { "type": "string", "default": "text/plain" }
       },

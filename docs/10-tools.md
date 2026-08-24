@@ -1,6 +1,6 @@
 # SCMP · 工具接口（L1）
 
-> 状态：v0.1-draft.1 · 机器可读定义：[../schema/tools/](../schema/tools/)
+> 状态：v0.2-draft.1 · 机器可读定义：[../schema/tools/](../schema/tools/)
 
 ## 0. 总则
 
@@ -27,6 +27,13 @@ SCMP 定义六个**规范名**（canonical names）：
 
 - 每个工具的描述**必须**包含本文各节标注的【必须包含文案】；宿主可以翻译、扩展，但语义不得削弱。
 - 文案与规范正文冲突时，以规范正文为准。
+
+### 0.4 目标寻址
+
+- 所有工具的 `target` 参数承载目标会话标识，按绑定模式取两种形式之一：
+  - **本地绑定**：`scmpId`（`runtime@encodedNativeId`，35 §2）
+  - **远程绑定**：完整地址 `gatewayId:clientId@scmpId`（[40-remote-binding](40-remote-binding.md) §3，对模型为 opaque 字符串）
+- `list_sessions` 返回的会话标识与 `target` 参数形式一致；Host 适配层负责按地址形态选择绑定路径（40 §13）。
 
 ## 1. dispatch
 
@@ -124,6 +131,7 @@ SCMP 定义六个**规范名**（canonical names）：
 
 - `recent` 按时间升序；每条**应当**截断至 500 字符（防调用方上下文膨胀）。
 - `recent` 中 `role` **必须**为 `user` | `assistant` | `system` | `tool` 之一（宿主内部角色按 [35-host-adaptation](35-host-adaptation.md) §4 映射，不得虚构内容）。
+- **远程绑定**：check 实现为路由式请求-响应（`kind=check` 信封 + reply，[40-remote-binding](40-remote-binding.md) §9），默认超时 30 秒，超时返回 `40813 request-timeout`。
 - **不是**结果获取主路径（主路径 = 自动回送）；工具描述**必须**强调这一点（见下文案）。
 - 隐私：v0.1 信任域内全量可读；会话级授权开关列为开放问题（[00-overview](00-overview.md) §8）。
 
@@ -173,7 +181,7 @@ SCMP 定义六个**规范名**（canonical names）：
   "self": {
     "sessionId": "…", "title": "…", "status": "idle",
     "workspace": "…", "runtime": "opencode",
-    "capabilities": [], "protocolVersion": "0.1"
+    "capabilities": [], "protocolVersion": "0.2"
   }
 }
 ```

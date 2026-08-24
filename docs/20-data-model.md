@@ -1,6 +1,6 @@
 # SCMP · 数据模型（L2）
 
-> 状态：v0.1-draft.1 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[../schema/messages/](../schema/messages/)
+> 状态：v0.2-draft.1 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[../schema/messages/](../schema/messages/)
 
 ## 1. 标识符
 
@@ -15,8 +15,16 @@
 `SessionRef`（会话引用，用于路由）：
 
 ```json
-{ "runtime": "opencode", "workspace": "/home/u/proj", "sessionId": "a1b2c3…" }
+{
+  "gateway": "gw-home",
+  "client": "laptop",
+  "runtime": "opencode",
+  "workspace": "/home/u/proj",
+  "sessionId": "opencode@a1b2c3…"
+}
 ```
+
+`gateway` / `client` 为**远程绑定可选字段**（远程时必填，本地省略）；完整地址的序列化形式 `gateway:client@sessionId` 见 [40-remote-binding](40-remote-binding.md) §3。
 
 ## 2. SessionInfo（会话记录）
 
@@ -50,9 +58,9 @@ v0.1 只有**本地信任域**：同一用户数据目录（见 [30-local-bindin
 
 | 字段 | 类型 | 必填 | 说明 |
 |---|---|---|---|
-| `protocolVersion` | string | ✓ | `"0.1"` |
+| `protocolVersion` | string | ✓ | `"0.2"` |
 | `messageId` | string | ✓ | 唯一标识，幂等去重依据 |
-| `kind` | string | ✓ | `dispatch` \| `wait` \| `notify` \| `reply` \| `system` |
+| `kind` | string | ✓ | `dispatch` \| `wait` \| `notify` \| `reply` \| `system` \| `check` |
 | `sender` | SessionRef | ✓ | 发送方 |
 | `target` | SessionRef | ✓ | 接收方 |
 | `payload` | Payload | ✓ | 类型化内容（§5） |
@@ -67,8 +75,9 @@ v0.1 只有**本地信任域**：同一用户数据目录（见 [30-local-bindin
 
 - `dispatch` / `wait`：期望回复的任务消息（区别在于调用方是否阻塞等待）
 - `notify`：单向消息，不期望回复
-- `reply`：对 `dispatch`/`wait` 的结果回送（自动生成，见 §7）
-- `system`：宿主间控制消息（v0.1 仅保留占位）
+- `reply`：对 `dispatch`/`wait`/`check` 的结果回送（自动生成，见 §7；check 见 [40-remote-binding](40-remote-binding.md) §9）
+- `system`：宿主间控制消息（v0.2 仅保留占位）
+- `check`：远程模式下 check 工具的路由式请求信封（携带可选 `request` 字段，见 [40-remote-binding](40-remote-binding.md) §9）
 
 ## 5. Payload 与 Part
 
@@ -169,6 +178,7 @@ submitted → working → completed
 | 40806 | permission-denied | 信任域外访问（v0.1 罕见，为 remote 预留） |
 | 40807 | session-terminated | 目标会话已终止 |
 | 40808 | payload-too-large | 信封超过大小上限 |
+| 40809–40814 | — | 远程绑定新增错误码（client-offline / auth-failed / version-mismatch / wrong-domain / request-timeout / superseded），见 [40-remote-binding](40-remote-binding.md) §11 |
 
 ErrorObject 形状：
 

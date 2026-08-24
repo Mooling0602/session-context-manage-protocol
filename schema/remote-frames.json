@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/remote-frames.json",
+  "title": "SCMP remote binding WebSocket frames",
+  "description": "SCMP v0.2 远程绑定帧协议（docs/40-remote-binding.md §6）。WebSocket 文本帧，UTF-8 JSON，单帧 ≤ 256 KiB",
+  "oneOf": [
+    { "$ref": "#/$defs/hello" },
+    { "$ref": "#/$defs/welcome" },
+    { "$ref": "#/$defs/error" },
+    { "$ref": "#/$defs/sessionUpsert" },
+    { "$ref": "#/$defs/sessionOffline" },
+    { "$ref": "#/$defs/sessionList" },
+    { "$ref": "#/$defs/sessionListResult" },
+    { "$ref": "#/$defs/presenceSub" },
+    { "$ref": "#/$defs/presenceEvent" },
+    { "$ref": "#/$defs/env" },
+    { "$ref": "#/$defs/nack" }
+  ],
+  "$defs": {
+    "frameType": { "type": "string", "enum": ["hello", "welcome", "error", "session.upsert", "session.offline", "session.list", "session.list.result", "presence.sub", "presence.event", "env", "nack"] },
+    "idName": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "errorObject": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "integer" },
+        "message": { "type": "string" },
+        "data": {}
+      },
+      "additionalProperties": true
+    },
+    "hello": {
+      "type": "object",
+      "title": "hello（C→G）",
+      "required": ["t", "v", "token", "clientId"],
+      "properties": {
+        "t": { "const": "hello" },
+        "v": { "const": "0.2" },
+        "token": { "type": "string", "minLength": 16 },
+        "clientId": { "$ref": "#/$defs/idName" }
+      },
+      "additionalProperties": false
+    },
+    "welcome": {
+      "type": "object",
+      "title": "welcome（G→C）",
+      "required": ["t", "v", "gatewayId"],
+      "properties": {
+        "t": { "const": "welcome" },
+        "v": { "const": "0.2" },
+        "gatewayId": { "$ref": "#/$defs/idName" }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "title": "error（G→C，随后关闭连接）",
+      "required": ["t", "error"],
+      "properties": {
+        "t": { "const": "error" },
+        "error": { "$ref": "#/$defs/errorObject" }
+      },
+      "additionalProperties": false
+    },
+    "sessionUpsert": {
+      "type": "object",
+      "title": "session.upsert（C→G）",
+      "required": ["t", "session"],
+      "properties": {
+        "t": { "const": "session.upsert" },
+        "session": { "$ref": "messages/session-info.json" }
+      },
+      "additionalProperties": false
+    },
+    "sessionOffline": {
+      "type": "object",
+      "title": "session.offline（C→G）",
+      "required": ["t", "sessionId"],
+      "properties": {
+        "t": { "const": "session.offline" },
+        "sessionId": { "type": "string", "minLength": 1, "description": "scmpId（不含域限定）" }
+      },
+      "additionalProperties": false
+    },
+    "sessionList": {
+      "type": "object",
+      "title": "session.list（C→G）",
+      "required": ["t", "reqId"],
+      "properties": {
+        "t": { "const": "session.list" },
+        "reqId": { "type": "string", "minLength": 1 },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "keyword": { "type": "string" },
+            "status": { "enum": ["idle", "busy", "terminated"] },
+            "workspace": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sessionListResult": {
+      "type": "object",
+      "title": "session.list.result（G→C）",
+      "required": ["t", "reqId", "sessions"],
+      "properties": {
+        "t": { "const": "session.list.result" },
+        "reqId": { "type": "string", "minLength": 1 },
+        "sessions": { "type": "array", "items": { "$ref": "messages/session-info.json" } }
+      },
+      "additionalProperties": false
+    },
+    "presenceSub": {
+      "type": "object",
+      "title": "presence.sub（C→G）",
+      "required": ["t", "target"],
+      "properties": {
+        "t": { "const": "presence.sub" },
+        "target": { "$ref": "#/$defs/idName" }
+      },
+      "additionalProperties": false
+    },
+    "presenceEvent": {
+      "type": "object",
+      "title": "presence.event（G→C）",
+      "required": ["t", "client", "online"],
+      "properties": {
+        "t": { "const": "presence.event" },
+        "client": { "$ref": "#/$defs/idName" },
+        "online": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "env": {
+      "type": "object",
+      "title": "env（双向，L2 信封原样）",
+      "required": ["t", "envelope"],
+      "properties": {
+        "t": { "const": "env" },
+        "envelope": { "$ref": "messages/envelope.json" }
+      },
+      "additionalProperties": false
+    },
+    "nack": {
+      "type": "object",
+      "title": "nack（G→C，路由失败）",
+      "required": ["t", "messageId", "error"],
+      "properties": {
+        "t": { "const": "nack" },
+        "messageId": { "type": "string" },
+        "error": { "$ref": "#/$defs/errorObject" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

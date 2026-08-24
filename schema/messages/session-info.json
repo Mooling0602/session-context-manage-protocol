@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/messages/session-info.json",
   "title": "SCMP SessionInfo",
-  "description": "SCMP v0.1 会话记录（docs/20-data-model.md §2）",
+  "description": "SCMP v0.2 会话记录（docs/20-data-model.md §2）",
   "type": "object",
   "required": ["ref", "title", "status", "protocolVersion", "updatedAt"],
   "properties": {
@@ -10,7 +10,7 @@
     "title": { "type": "string", "minLength": 1 },
     "status": { "enum": ["idle", "busy", "terminated"] },
     "capabilities": { "type": "array", "items": { "type": "string" }, "default": [] },
-    "protocolVersion": { "const": "0.1" },
+    "protocolVersion": { "const": "0.2" },
     "updatedAt": { "type": "string", "format": "date-time" },
     "stale": { "type": "boolean", "default": false, "description": "由观察方计算的心跳过期标记，不持久化" }
   },
@@ -18,12 +18,14 @@
     "sessionRef": {
       "type": "object",
       "title": "SCMP SessionRef",
-      "description": "会话引用，用于消息路由（docs/20-data-model.md §1）",
+      "description": "会话引用，用于消息路由（docs/20-data-model.md §1；gateway/client 为远程绑定可选字段，见 docs/40-remote-binding.md §3.2）",
       "required": ["runtime", "workspace", "sessionId"],
       "properties": {
+        "gateway": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "远程绑定时必填：网关域标识" },
+        "client": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "远程绑定时必填：客户端标识" },
         "runtime": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "examples": ["opencode", "dsh"] },
         "workspace": { "type": "string", "minLength": 1 },
-        "sessionId": { "type": "string", "minLength": 1 }
+        "sessionId": { "type": "string", "minLength": 1, "description": "scmpId（runtime@encodedNativeId），不含域限定" }
       },
       "additionalProperties": false
     }

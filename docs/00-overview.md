@@ -1,8 +1,8 @@
 # SCMP · 概述（Session Context Manage Protocol）
 
-> **状态**：v0.1-draft.1（中文草案）
+> **状态**：v0.2-draft.1（中文草案）
 > **规范语言**：本文档族使用 RFC 2119 风格关键词：**必须（MUST）**、**不得（MUST NOT）**、**应当（SHOULD）**、**不应当（SHOULD NOT）**、**可以（MAY）**。
-> **协议版本标识**：`protocolVersion: "0.1"`
+> **协议版本标识**：`protocolVersion: "0.2"`
 
 ## 1. SCMP 是什么
 
@@ -26,15 +26,15 @@ SCMP（Session Context Manage Protocol）是一个面向 LLM Coding Agent 的**�
 
 SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/opencode-agent-bridge)（npm 插件，已在真实模型上验证六工具模型的可行性与模型行为特征）。本规范将其经验协议化，并吸收 A2A 语义层（调研存档见 [research-acp-a2a.md](research-acp-a2a.md)）。
 
-## 3. 非目标（v0.1）
+## 3. 非目标（当前草案期）
 
-以下内容明确排除在 v0.1 之外：
+以下内容明确排除在外：
 
-- **远程连接协议与跨机鉴权** —— 规划于 v0.2（`docs/40-remote-binding.md`，占位）。
+- **网关联邦与集群**（gateway↔gateway 互联路由、多节点共享总线）——v0.3 候选；v0.2 以 Host 多归属覆盖跨域可达性（[40-remote-binding](40-remote-binding.md)）。
 - **宿主插件实现** —— 本仓库只交付规范与 Schema；适配器（opencode、dsh 等）在各自仓库实现。
 - **工具执行沙箱、资源配额、计费** —— 属于宿主职责。
-- **流式传输（SSE 等）** —— v0.1 消息均为完整投递，无流式语义。
-- **文件/图像等富媒体 Part** —— 数据模型预留扩展位，v0.1 只定义 `text` Part。
+- **流式传输（SSE 等）** —— 消息均为完整投递，无流式语义。
+- **文件/图像等富媒体 Part** —— 数据模型预留扩展位，当前只定义 `text` Part。
 
 ## 4. 术语
 
@@ -61,14 +61,14 @@ SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/o
 │  correlationId 幂等 · callChain 环检测 · TTL  │
 ├─────────────────────────────────────────────┤
 │  L3 传输绑定层                                │
-│  v0.1: local（文件注册表 + inbox）           │
-│  v0.2: remote（规划）                        │
+│  v0.2: local（文件注册表 + inbox）           │
+│        remote（WS 网关路由，纯路由域模型）    │
 └─────────────────────────────────────────────┘
 ```
 
 - **L1** 规定模型调用的六个工具的名称、参数、返回与语义（[10-tools.md](10-tools.md)）
 - **L2** 规定跨宿主一致的数据结构与状态语义（[20-data-model.md](20-data-model.md)）
-- **L3** 规定语义如何在具体传输上落地（[30-local-binding.md](30-local-binding.md)）
+- **L3** 规定语义如何在具体传输上落地：[30-local-binding.md](30-local-binding.md)（本地）与 [40-remote-binding.md](40-remote-binding.md)（远程）
 
 ## 6. 与 MCP / A2A / ACP 的关系
 
@@ -87,14 +87,16 @@ SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/o
 | `20-data-model.md` | L2 数据模型 | 语义核心 |
 | `30-local-binding.md` | L3 本地绑定 | 同机多宿主互操作 |
 | `35-host-adaptation.md` | 宿主适配规范 | 各家内部结构 → 协议概念的映射与降级（跨工具兼容） |
+| `40-remote-binding.md` | L3b 远程绑定 | 网关路由域模型、WS 帧协议、鉴权、多归属、远程 check |
 | `90-conformance.md` | 一致性要求 | 实现声明合规 |
 | `../schema/` | 机器可读 JSON Schema | 工具定义可直接被宿主消费 |
 | `../versions.md` | 版本化策略 | 演进规则 |
 
 ## 8. 开放问题（草案期）
 
-- [ ] 远程绑定的传输选型（v0.2 前必须决定：WebSocket / HTTP+SSE / 对齐 A2A HTTP binding）
-- [ ] `check` 的隐私边界粒度（会话级授权开关？默认可读范围？）
+- [x] 远程绑定的传输选型 —— 已定：WebSocket + JSON（v0.2-draft.1）
+- [ ] 网关联邦与集群的引入时机（v0.3 候选）
+- [ ] `check` 的隐私边界粒度（会话级授权开关？默认可读范围？本地与远程统一考虑）
 - [ ] 富媒体 Part（file/image）的引入时机
 - [ ] 英文 normative 版本的翻译启动点
 - [ ] 排队策略的细粒度控制（per-target busyPolicy 的配置面）
