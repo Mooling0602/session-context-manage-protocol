@@ -31,6 +31,7 @@
 | [docs/10-tools.md](docs/10-tools.md) | L1 · 六个工具的规范定义（含防轮询必须文案） |
 | [docs/20-data-model.md](docs/20-data-model.md) | L2 · 数据模型：信封、派发状态机、错误码、环检测、TTL |
 | [docs/30-local-binding.md](docs/30-local-binding.md) | L3a · 本地绑定：文件注册表、原子写、inbox 投递 |
+| [docs/35-host-adaptation.md](docs/35-host-adaptation.md) | 宿主适配 · 跨工具内部结构 → 协议概念的规范化映射与降级 |
 | [docs/90-conformance.md](docs/90-conformance.md) | 一致性分级（C1/C2/C3）与 MUST 检查表 |
 | [versions.md](versions.md) | 版本化策略与变更日志 |
 | [schema/](schema/) | 机器可读 JSON Schema（工具定义可直接被宿主消费） |
@@ -42,6 +43,7 @@
 2. **结果自动回送为一等机制**：实测表明模型会无意义轮询，协议把「结果主动送达 + 工具描述防轮询文案」定为规范性要求。
 3. **协议级环检测**：信封携带 `callChain`，循环等待在投递前即被拒绝（40803），杜绝 A-wait-B / B-wait-A 死锁。
 4. **显式关联取代猜测**：correlationId / dispatchId 取代原实现「水位 + 文本探针 + 50 条滑窗」的回复识别。
+5. **宿主适配规范化**：协议面只见 SCMP 概念——SCMP 会话 ID（`runtime@原生ID`）、统一角色枚举、统一注入格式；各家内部结构差异按 [35 分册](docs/35-host-adaptation.md)降级映射，原生 ID 不泄漏。
 
 ## 路线图
 

@@ -6,7 +6,7 @@
 
 | 字段 | 类型 | 规则 |
 |---|---|---|
-| `sessionId` | string | 宿主生成的会话唯一标识，opaque，本地信任域内不得重复；建议 UUIDv4 |
+| `sessionId` | string | SCMP 规范化会话 ID：`<runtime>@<encodedNativeId>`（定义见 [35-host-adaptation](35-host-adaptation.md) §2）；原生 ID 不得进入协议数据 |
 | `messageId` | string | 每个信封的唯一标识，发送方生成，UUIDv4 |
 | `dispatchId` | string | 派发记录唯一标识，**调用方生成**（幂等键），UUIDv4 |
 | `runtime` | string | 宿主标识，`^[a-z][a-z0-9-]*$`（如 `opencode`、`dsh`） |
@@ -25,7 +25,7 @@
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `ref` | SessionRef | 会话引用 |
-| `title` | string | 人类可读标题（会话摘要） |
+| `title` | string | 人类可读标题；宿主无原生标题时按合成规则降级（[35-host-adaptation](35-host-adaptation.md) §3） |
 | `status` | `idle` \| `busy` \| `terminated` | `busy` = 正在处理一轮 LLM 交互 |
 | `capabilities` | string[] | 可选能力声明（v0.1 保留，可为空） |
 | `protocolVersion` | string | 宿主实现的 SCMP 版本 |
@@ -111,7 +111,7 @@ submitted → working → completed
 
 迁移触发器（满足任一即可推进状态）：
 
-1. **自动**：目标宿主观察到目标会话由该派发触发的处理轮次结束（`busy→idle`）→ `working→completed`，`result` = 该轮最终 assistant 回复（text Part）。
+1. **自动**：目标宿主观察到目标会话由该派发触发的处理轮次结束（`busy→idle`）→ `working→completed`，`result` = 该轮最终 assistant 回复（text Part；「处理轮次」与抽取定义见 [35-host-adaptation](35-host-adaptation.md) §5）。
 2. **显式兜底**：目标会话中的模型调用 `notify` 且消息内容包含对应 `dispatchId` 与完成声明 → 同上迁移。兜底路径用于自动观察失效的场景（如多实例事件不可靠）。
 3. `failed`：目标会话处理报错、目标 `terminated`、或处理轮次失败。
 4. `canceled`：调用方在超时后放弃（记录层面标记）。

@@ -123,6 +123,7 @@ SCMP 定义六个**规范名**（canonical names）：
 语义细则：
 
 - `recent` 按时间升序；每条**应当**截断至 500 字符（防调用方上下文膨胀）。
+- `recent` 中 `role` **必须**为 `user` | `assistant` | `system` | `tool` 之一（宿主内部角色按 [35-host-adaptation](35-host-adaptation.md) §4 映射，不得虚构内容）。
 - **不是**结果获取主路径（主路径 = 自动回送）；工具描述**必须**强调这一点（见下文案）。
 - 隐私：v0.1 信任域内全量可读；会话级授权开关列为开放问题（[00-overview](00-overview.md) §8）。
 

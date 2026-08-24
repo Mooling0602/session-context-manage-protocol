@@ -21,7 +21,7 @@ $SCMP_HOME/
 
 - 文件均为 UTF-8 JSON，末尾换行；单文件 ≤ 256 KiB（20 §11）。
 - 目录权限**应当**为 0700，文件 0600（信任域内私有）。
-- `sessionId` 在信任域内跨宿主唯一；若宿主原生会话 ID 可能与其他宿主冲突，宿主**必须**加前缀（如 `opencode-<原生ID>`）。
+- `sessionId` 在信任域内跨宿主唯一：一律使用 SCMP 规范化 ID（`<runtime>@<encodedNativeId>`，[35-host-adaptation](35-host-adaptation.md) §2），文件名即该 ID（原生 ID 已做安全编码）。
 
 ## 3. 原子写与并发
 

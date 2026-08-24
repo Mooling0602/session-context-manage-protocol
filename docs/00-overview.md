@@ -86,6 +86,7 @@ SCMP 的直接前身是 [opencode-agent-bridge](https://github.com/Mooling0602/o
 | `10-tools.md` | L1 工具规范 | 实现宿主工具的直接依据 |
 | `20-data-model.md` | L2 数据模型 | 语义核心 |
 | `30-local-binding.md` | L3 本地绑定 | 同机多宿主互操作 |
+| `35-host-adaptation.md` | 宿主适配规范 | 各家内部结构 → 协议概念的映射与降级（跨工具兼容） |
 | `90-conformance.md` | 一致性要求 | 实现声明合规 |
 | `../schema/` | 机器可读 JSON Schema | 工具定义可直接被宿主消费 |
 | `../versions.md` | 版本化策略 | 演进规则 |
