@@ -35,6 +35,7 @@ SCMP 规范诞生之前已有落地方案 [opencode-agent-bridge](https://github
 - **工具执行沙箱、资源配额、计费** —— 属于宿主职责。
 - **流式传输（SSE 等）** —— 消息均为完整投递，无流式语义。
 - **文件/图像等富媒体 Part** —— 数据模型预留扩展位，当前只定义 `text` Part。
+- **二进制序列化与 gRPC 绑定（Protobuf）** —— JSON 是唯一 canonical 序列化：SCMP 消息的第一消费者是 LLM 上下文（帧以文本注入，见 [35 分册](35-host-adaptation.md)），宿主适配器为轻量插件，引入 protoc 工具链将不成比例地抬高实现门槛；且消息体极小，WS+JSON 无性能瓶颈。A2A 的 `a2a.proto`（gRPC 备选绑定）不改变其 JSON-RPC 主形态，SCMP 亦不跟随。**留门**：若 v0.3 网关联邦出现高扇出流量需求，可从 JSON Schema 语义**派生**可选 proto 线上绑定，规范正文与 Schema 仍以 JSON 为单一事实源。
 
 ## 4. 术语
 
@@ -75,7 +76,7 @@ SCMP 规范诞生之前已有落地方案 [opencode-agent-bridge](https://github
 | 协议 | 关系 |
 |---|---|
 | MCP | 正交互补：MCP 连接「LLM ↔ 工具」；SCMP 连接「会话 ↔ 会话」。SCMP 工具可视为一组特殊的宿主内置工具 |
-| A2A | **语义对齐**：Task 状态机、taskId 幂等、Message/Part 模型、错误码风格借鉴 A2A；传输层不采用其 HTTP 绑定（v0.1） |
+| A2A | **语义对齐**：Task 状态机、taskId 幂等、Message/Part 模型、错误码风格借鉴 A2A；传输层不采用其 HTTP 绑定（v0.1），亦不引入其 Protobuf/gRPC 绑定（见 §3 非目标） |
 | ACP | 已归档并入 A2A，不采用（调研见 [research-acp-a2a.md](research-acp-a2a.md)） |
 
 ## 7. 规范组成与阅读顺序
