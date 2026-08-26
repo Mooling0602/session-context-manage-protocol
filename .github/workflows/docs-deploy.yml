@@ -1,0 +1,63 @@
+name: Docs Deploy
+
+"on":
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "要发布的 mike 版本号（如 v0.2.0）；留空则仅刷新 latest 快照"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Build site (strict)
+        run: mkdocs build --strict
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            echo "version=v${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy with mike
+        shell: bash
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          if [[ -n "$version" ]]; then
+            mike deploy --push --update-aliases "${version}" latest
+          else
+            mike deploy --push latest
+          fi
+          mike set-default --push latest

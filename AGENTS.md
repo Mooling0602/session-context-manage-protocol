@@ -51,6 +51,10 @@ own repositories.
 
 ## Verification
 
-- No build or test suite yet (spec-only repo). Before committing, re-read the
+- No build or test suite for the spec itself. Before committing, re-read the
   edited section for internal links (`[text](file.md)`) and table formatting;
   keep line width reasonable for terminal reading.
+- Docs site (MkDocs Material): after any structural docs change (nav, links,
+  new/renamed files), run `mkdocs build --strict` (deps:
+  `pip install -r requirements-docs.txt`). Links from `docs/` to files outside
+  it (e.g. `schema/`) must use absolute GitHub URLs, not `../` relative paths.

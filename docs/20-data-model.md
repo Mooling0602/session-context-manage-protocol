@@ -1,6 +1,6 @@
 # SCMP · 数据模型（L2）
 
-> 状态：v0.2-draft.1 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[../schema/messages/](../schema/messages/)
+> 状态：v0.2-draft.1 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[schema/messages/](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema/messages/)
 
 ## 1. 标识符
 

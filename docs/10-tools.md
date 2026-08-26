@@ -1,6 +1,6 @@
 # SCMP · 工具接口（L1）
 
-> 状态：v0.2-draft.1 · 机器可读定义：[../schema/tools/](../schema/tools/)
+> 状态：v0.2-draft.1 · 机器可读定义：[schema/tools/](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema/tools/)
 
 ## 0. 总则
 

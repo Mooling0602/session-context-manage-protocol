@@ -1,0 +1,6 @@
+:root {
+  --md-text-font: "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --md-code-font: "JetBrains Mono", "Cascadia Code", Consolas,
+    "Noto Sans Mono CJK SC", Menlo, monospace;
+}
