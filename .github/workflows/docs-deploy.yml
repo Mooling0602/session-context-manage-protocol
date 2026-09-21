@@ -10,7 +10,7 @@ name: Docs Deploy
   workflow_dispatch:
     inputs:
       version:
-        description: "要发布的 mike 版本号（如 v0.2.0）；留空则仅刷新 latest 快照"
+        description: "要发布的 mike 版本号（如 v0.2.0）；留空则重建并刷新 latest 别名所指向的版本（若尚无版本持有 latest，则跳过部署）"
         required: false
         default: ""
 
@@ -67,9 +67,20 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if [[ -n "${VERSION}" ]]; then
-            mike deploy --push --update-aliases "${VERSION}" latest
-          else
-            mike deploy --push latest
+          # mike deploy 的首个位置参数是 VERSION（`VERSION [ALIAS ...]`），
+          # 因此 `mike deploy latest` 把 latest 当作版本名：在全新仓库会建出一个
+          # 名为 latest 的版本，而在 latest 已是别名时报错退出——都不是「刷新
+          # latest 别名」。留空时改为解析持有 latest 别名的版本，再重建重部署它。
+          target="${VERSION}"
+          if [[ -z "${target}" ]]; then
+            target="$(mike list 2>/dev/null \
+              | awk -F'[][]' 'NF > 1 && $2 ~ /(^|, *)latest(,|$)/ {print $1; exit}' \
+              | tr -d '[:space:]')"
+            if [[ -z "${target}" ]]; then
+              echo "没有任何版本持有 latest 别名，跳过部署。"
+              exit 0
+            fi
+            echo "刷新 latest 别名：重建并重部署 ${target}"
           fi
+          mike deploy --push --update-aliases "${target}" latest
           mike set-default --push latest
