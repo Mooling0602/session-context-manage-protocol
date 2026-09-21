@@ -21,16 +21,7 @@ own repositories.
 
 ## Git
 
-- Follow the parent workspace spec (SSH signing, rebase over merge, never
-  force-push `main`).
-- `main` is the protected integration branch; `vibe` is the freestyle branch
-  (freestyle commits allowed, messages just need to express intent).
-- Force-pushing is forbidden everywhere by default; the only permitted
-  exception is `vibe`, and only with explicit user authorization. Prefer
-  `git push --force-with-lease origin vibe`.
-- For bot-attributed commits use `commit.sh -m "..."` (hybrid commit: bot
-  author + user committer + SSH signature, shows Verified on GitHub). Plain
-  `git commit` is acceptable when bot attribution is not needed.
+- `main` is the protected integration branch; `vibe` is the freestyle branch.
 
 ## Documentation conventions
 
