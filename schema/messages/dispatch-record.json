@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/Mooling0602/session-context-manage-protocol/main/schema/messages/dispatch-record.json",
   "title": "SCMP DispatchRecord",
-  "description": "SCMP v0.1 派发记录与状态机（docs/20-data-model.md §6）",
+  "description": "SCMP v0.2 派发记录与状态机（docs/20-data-model.md §6）",
   "type": "object",
   "required": ["dispatchId", "envelope", "state", "createdAt", "updatedAt", "expiresAt"],
   "properties": {

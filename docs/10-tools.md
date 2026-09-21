@@ -1,6 +1,6 @@
 # SCMP · 工具接口（L1）
 
-> 状态：v0.2-draft.1 · 机器可读定义：[schema/tools/](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema/tools/)
+> 状态：v0.2-draft.2 · 机器可读定义：[schema/tools/](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema/tools/)
 
 ## 0. 总则
 
@@ -45,7 +45,7 @@ SCMP 定义六个**规范名**（canonical names）：
 |---|---|---|---|
 | `target` | string | ✓ | 目标会话的 sessionId |
 | `message` | string | ✓ | 派发的消息正文（Markdown） |
-| `timeout` | integer | – | 结果等待上限（秒），默认 1800；超时后记录标记超时 |
+| `timeout` | integer | – | 结果等待上限（秒），默认 1800；超时后记录标记超时，但状态**不因此改变**（仍为 `working`）——调用方可以继续等待，或按 [20 §6](20-data-model.md) 触发器 4 放弃并置 `canceled` |
 
 输出：
 

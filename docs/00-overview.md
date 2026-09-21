@@ -1,6 +1,6 @@
 # SCMP · 概述（Session Context Manage Protocol）
 
-> **状态**：v0.2-draft.1（中文草案）
+> **状态**：v0.2-draft.2（中文草案）
 > **规范语言**：本文档族使用 RFC 2119 风格关键词：**必须（MUST）**、**不得（MUST NOT）**、**应当（SHOULD）**、**不应当（SHOULD NOT）**、**可以（MAY）**。
 > **协议版本标识**：`protocolVersion: "0.2"`
 
@@ -22,7 +22,7 @@ SCMP（Session Context Manage Protocol）是一个面向 LLM Coding Agent 的**�
 | 父会话同步阻塞等待子代理返回 | `dispatch` 异步派发，结果自动回送，父会话继续工作 |
 | 子代理之间不能互相通信，只能经父代理中转 | 任意会话间可直接 `dispatch`/`wait`/`notify` |
 | 各家实现私有，不可移植 | 工具接口、数据模型、传输绑定全部标准化 |
-| 无法跨工具/跨机器协作 | v0.2 远程绑定（规划） |
+| 无法跨工具/跨机器协作 | v0.2 远程绑定（网关路由域 + WS 帧协议，已出草案） |
 
 SCMP 规范诞生之前已有落地方案 [opencode-agent-bridge](https://github.com/Mooling0602/opencode-agent-bridge)（npm 插件，已在真实模型上验证六工具模型的可行性与模型行为特征）。本规范将其经验协议化，并吸收 A2A 语义层（调研存档见 [research-acp-a2a.md](research-acp-a2a.md)）。
 
@@ -90,8 +90,8 @@ SCMP 规范诞生之前已有落地方案 [opencode-agent-bridge](https://github
 | `35-host-adaptation.md` | 宿主适配规范 | 各家内部结构 → 协议概念的映射与降级（跨工具兼容） |
 | `40-remote-binding.md` | L3b 远程绑定 | 网关路由域模型、WS 帧协议、鉴权、多归属、远程 check |
 | `90-conformance.md` | 一致性要求 | 实现声明合规 |
-| `../schema/` | 机器可读 JSON Schema | 工具定义可直接被宿主消费 |
-| `../versions.md` | 版本化策略 | 演进规则 |
+| [`schema/`](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema) | 机器可读 JSON Schema | 工具定义可直接被宿主消费 |
+| [`versions.md`](https://github.com/Mooling0602/session-context-manage-protocol/blob/main/versions.md) | 版本化策略 | 演进规则 |
 
 ## 8. 开放问题（草案期）
 

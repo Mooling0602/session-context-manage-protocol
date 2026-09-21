@@ -1,8 +1,7 @@
 # AGENTS.md — session-context-manage-protocol
 
-Guidelines for AI agents working in this repository. The parent workspace spec
-(`/home/agent/workspace/AGENTS.md`) applies in full; this file only adds
-project-specific rules.
+Guidelines for AI agents working in this repository. Any parent workspace spec
+applies in full; this file only adds project-specific rules.
 
 ## Project
 

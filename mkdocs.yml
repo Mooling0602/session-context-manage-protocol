@@ -46,6 +46,9 @@ extra:
   version:
     provider: mike
 
+extra_css:
+  - stylesheets/extra.css
+
 plugins:
   - search:
       # lunr 无中文分词器；ja（tinysegmenter）可对 CJK 文本分词，中文站点通用替代方案

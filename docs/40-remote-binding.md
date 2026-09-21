@@ -1,6 +1,6 @@
 # SCMP · 远程绑定（L3b）
 
-> 状态：v0.2-draft.1 · 上游：[00-overview](00-overview.md) / [20-data-model](20-data-model.md) / [35-host-adaptation](35-host-adaptation.md) · 机器可读定义：[schema/remote-frames.json](https://github.com/Mooling0602/session-context-manage-protocol/blob/main/schema/remote-frames.json)
+> 状态：v0.2-draft.2 · 上游：[00-overview](00-overview.md) / [20-data-model](20-data-model.md) / [35-host-adaptation](35-host-adaptation.md) · 机器可读定义：[schema/remote-frames.json](https://github.com/Mooling0602/session-context-manage-protocol/blob/main/schema/remote-frames.json)
 
 ## 1. 范围与拓扑
 
