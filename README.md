@@ -4,7 +4,7 @@
 
 > 面向 LLM Coding Agent 的**跨会话协作协议**：让多个保有独立上下文的会话彼此发现、派发任务、等待回复、发送通知并检查上下文。
 >
-> 状态：**v0.2-draft.1（中文草案）** · 远程绑定（v0.2）已出草案 · 英文 normative 版本规划中
+> 状态：**v0.2-draft.2（中文草案）** · 远程绑定（v0.2）已出草案 · 英文 normative 版本规划中
 
 ## 一句话定位
 
@@ -33,7 +33,7 @@
 | [docs/30-local-binding.md](docs/30-local-binding.md) | L3a · 本地绑定：文件注册表、原子写、inbox 投递 |
 | [docs/40-remote-binding.md](docs/40-remote-binding.md) | L3b · 远程绑定：网关路由域、WS 帧协议、鉴权、多归属、远程 check |
 | [docs/35-host-adaptation.md](docs/35-host-adaptation.md) | 宿主适配 · 跨工具内部结构 → 协议概念的规范化映射与降级 |
-| [docs/90-conformance.md](docs/90-conformance.md) | 一致性分级（C1/C2/C3）与 MUST 检查表 |
+| [docs/90-conformance.md](docs/90-conformance.md) | 一致性分级（C1–C5）与 MUST 检查表 |
 | [versions.md](versions.md) | 版本化策略与变更日志 |
 | [schema/](schema/) | 机器可读 JSON Schema（工具定义可直接被宿主消费） |
 | [docs/research-acp-a2a.md](docs/research-acp-a2a.md) | 前期 ACP/A2A 调研存档（结论已吸收进规范） |

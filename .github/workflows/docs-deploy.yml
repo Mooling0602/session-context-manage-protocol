@@ -1,0 +1,86 @@
+name: Docs Deploy
+
+"on":
+  push:
+    tags:
+      - "*.*.*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "要发布的 mike 版本号（如 v0.2.0）；留空则重建并刷新 latest 别名所指向的版本（若尚无版本持有 latest，则跳过部署）"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Configure git identity
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Build site (strict)
+        run: mkdocs build --strict
+
+      - name: Resolve version
+        id: version
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          # 统一为 v 前缀，避免 tag 名为 v0.2.0 时得到 vv0.2.0
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            echo "version=v${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${INPUT_VERSION}" ]]; then
+            echo "version=v${INPUT_VERSION#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy with mike
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # mike deploy 的首个位置参数是 VERSION（`VERSION [ALIAS ...]`），
+          # 因此 `mike deploy latest` 把 latest 当作版本名：在全新仓库会建出一个
+          # 名为 latest 的版本，而在 latest 已是别名时报错退出——都不是「刷新
+          # latest 别名」。留空时改为解析持有 latest 别名的版本，再重建重部署它。
+          target="${VERSION}"
+          if [[ -z "${target}" ]]; then
+            target="$(mike list 2>/dev/null \
+              | awk -F'[][]' 'NF > 1 && $2 ~ /(^|, *)latest(,|$)/ {print $1; exit}' \
+              | tr -d '[:space:]')"
+            if [[ -z "${target}" ]]; then
+              echo "没有任何版本持有 latest 别名，跳过部署。"
+              exit 0
+            fi
+            echo "刷新 latest 别名：重建并重部署 ${target}"
+          fi
+          mike deploy --push --update-aliases "${target}" latest
+          mike set-default --push latest

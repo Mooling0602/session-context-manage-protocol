@@ -1,0 +1,88 @@
+site_name: SCMP · Session Context Manage Protocol
+site_description: >-
+  SCMP（Session Context Manage Protocol）—— 面向 LLM Coding Agent 的跨会话协作协议：
+  发现、派发、等待、通知与上下文检查。
+site_url: https://mooling0602.github.io/session-context-manage-protocol/
+repo_url: https://github.com/Mooling0602/session-context-manage-protocol
+repo_name: Mooling0602/session-context-manage-protocol
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: zh
+  font: false
+  icon:
+    logo: material/transit-connection-variant
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: 切换到暗色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: 切换到亮色模式
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.action.edit
+    - content.tooltips
+    - search.suggest
+    - search.highlight
+    - search.share
+
+extra:
+  generator: false
+  version:
+    provider: mike
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search:
+      # lunr 无中文分词器；ja（tinysegmenter）可对 CJK 文本分词，中文站点通用替代方案
+      lang:
+        - en
+        - ja
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+      # 保留中文标题锚点（默认 slugify 会把中文标题压成空锚点）
+      # pymdown-extensions 12 起 uslugify 已改名为私有 _uslugify，公开入口
+      # 是返回偏函数的可配置工厂 slugify；此写法在 11/12 均可构建。
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {}}
+
+nav:
+  - 首页: index.md
+  - 概述: 00-overview.md
+  - L1 · 工具接口: 10-tools.md
+  - L2 · 数据模型: 20-data-model.md
+  - L3a · 本地绑定: 30-local-binding.md
+  - 宿主适配: 35-host-adaptation.md
+  - L3b · 远程绑定: 40-remote-binding.md
+  - 一致性: 90-conformance.md
+  - ACP/A2A 调研存档: research-acp-a2a.md

@@ -1,6 +1,6 @@
 # SCMP · 数据模型（L2）
 
-> 状态：v0.2-draft.1 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[../schema/messages/](../schema/messages/)
+> 状态：v0.2-draft.2 · 上游：[00-overview.md](00-overview.md) · 机器可读定义：[schema/messages/](https://github.com/Mooling0602/session-context-manage-protocol/tree/main/schema/messages/)
 
 ## 1. 标识符
 
@@ -140,7 +140,7 @@ submitted → working → completed
 - 注入格式建议（宿主可调整措辞，信息不得缺失）：
 
   ```
-  [SCMP] 会话 <sender title>（<sessionId 前 8 位>）对派发 <dispatchId 前 8 位> 的结果已送达：
+  [SCMP] 会话 <sender title>（<sender sessionId 前 12 字符>）对派发 <dispatchId 前 8 字符> 的结果已送达：
   <result text>
   ```
 
@@ -153,7 +153,7 @@ submitted → working → completed
 - `callChain` 为 sessionId 有序列表，从链首会话开始。
 - 发起 `dispatch`/`wait` 时，调用方宿主**必须**构造 callChain = 父链（若自身因处理 SCMP 派发而发起）+ [自身 sessionId]。
 - 投递前宿主**必须**检查：`target.sessionId ∈ callChain` → 拒绝，错误码 `40803 loop-detected`。
-- `len(callChain) > maxDepth`（默认 8，宿主可配）→ 拒绝，同样 `40803`。
+- `len(callChain) > maxDepth`（默认 8；宿主可配，但**协议上限为 16**——见 [`schema/messages/envelope.json`](https://github.com/Mooling0602/session-context-manage-protocol/blob/main/schema/messages/envelope.json) 的 `maxItems`）→ 拒绝，同样 `40803`。
 - `notify`/`reply` 不产生等待依赖，**不参与**环检测（callChain 仍随消息传播以备观察）。
 
 ## 9. TTL 与清理
