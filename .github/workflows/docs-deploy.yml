@@ -4,6 +4,9 @@ name: Docs Deploy
   push:
     tags:
       - "*.*.*"
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
@@ -34,6 +37,7 @@ jobs:
         run: pip install -r requirements-docs.txt
 
       - name: Configure git identity
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,20 +47,28 @@ jobs:
 
       - name: Resolve version
         id: version
+        if: github.event_name != 'pull_request'
         shell: bash
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
+          # 统一为 v 前缀，避免 tag 名为 v0.2.0 时得到 vv0.2.0
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            echo "version=v${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            echo "version=v${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${INPUT_VERSION}" ]]; then
+            echo "version=v${INPUT_VERSION#v}" >> "$GITHUB_OUTPUT"
           else
-            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "version=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Deploy with mike
+        if: github.event_name != 'pull_request'
         shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          version="${{ steps.version.outputs.version }}"
-          if [[ -n "$version" ]]; then
-            mike deploy --push --update-aliases "${version}" latest
+          if [[ -n "${VERSION}" ]]; then
+            mike deploy --push --update-aliases "${VERSION}" latest
           else
             mike deploy --push latest
           fi
